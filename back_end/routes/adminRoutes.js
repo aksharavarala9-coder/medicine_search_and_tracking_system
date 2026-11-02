@@ -1,5 +1,13 @@
 const express = require("express");
-const { getSummary } = require("../controllers/adminController");
+const {
+	getCustomers,
+	getFeedback,
+	getOrders,
+	getPharmacies,
+	getSummary,
+	updatePharmacyStatus,
+	updateUserStatus,
+} = require("../controllers/adminController");
 const authenticate = require("../middleware/authMiddleware");
 const allowRoles = require("../middleware/roleMiddleware");
 
@@ -7,5 +15,11 @@ const router = express.Router();
 
 router.use(authenticate, allowRoles("admin"));
 router.get("/summary", getSummary);
+router.get("/customers", getCustomers);
+router.patch("/customers/:userId/status", updateUserStatus);
+router.get("/pharmacies", getPharmacies);
+router.patch("/pharmacies/:shopId/status", updatePharmacyStatus);
+router.get("/orders", getOrders);
+router.get("/feedback", getFeedback);
 
 module.exports = router;

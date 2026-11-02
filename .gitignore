@@ -5,3 +5,5 @@ node_modules/
 dist/
 build/
 *.log
+back_end/private_uploads/
+back_end/private_uploads/

@@ -6,6 +6,11 @@ const medicineSchema = new mongoose.Schema(
     description: { type: String, trim: true },
     price: { type: Number, required: true, min: 0 },
     stock: { type: Number, required: true, min: 0, default: 0 },
+    image: {
+      storageName: { type: String },
+      mimeType: { type: String },
+      originalName: { type: String },
+    },
     shop: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "MedicalShop",

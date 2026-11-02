@@ -24,6 +24,10 @@ const orderSchema = new mongoose.Schema(
       },
     ],
     total: { type: Number, required: true, min: 0 },
+    prescription: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Prescription",
+    },
     status: {
       type: String,
       enum: ["pending", "confirmed", "ready", "completed", "cancelled"],

@@ -1,9 +1,9 @@
-import medicineCross from "../assets/medicine-cross.svg";
+import MedicineImage from "./MedicineImage.jsx";
 
-function MedicineCard({ medicine }) {
+function MedicineCard({ medicine, onAddToCart }) {
   return (
     <article className="medicine-card-item">
-      <img className="medicine-symbol" src={medicineCross} alt="" />
+      <MedicineImage className="medicine-symbol" medicine={medicine} />
       <div className="medicine-detail">
         <h3>{medicine.name}</h3>
         <p>{medicine.shop?.name || "Local pharmacy"}</p>
@@ -12,10 +12,19 @@ function MedicineCard({ medicine }) {
       <div className="medicine-price">
         <strong>{new Intl.NumberFormat(undefined, {
           style: "currency",
-          currency: "USD",
+          currency: "INR",
         }).format(medicine.price)}</strong>
         <span>{medicine.stock > 0 ? "In stock" : "Check availability"}</span>
       </div>
+      <button
+        aria-label={`Add ${medicine.name} to order`}
+        className="add-to-order"
+        disabled={medicine.stock < 1}
+        onClick={() => onAddToCart(medicine)}
+        type="button"
+      >
+        Add
+      </button>
     </article>
   );
 }

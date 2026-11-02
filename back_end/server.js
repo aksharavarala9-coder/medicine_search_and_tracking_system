@@ -17,12 +17,20 @@ app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 app.use("/api/pharmacy", require("./routes/pharmacyRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
+app.use("/api/prescriptions", require("./routes/prescriptionRoutes"));
+app.use("/api/chat", require("./routes/chatRoutes"));
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found." });
 });
 
 app.use((error, req, res, next) => {
+  if (error.code === "LIMIT_FILE_SIZE" || error.code === "LIMIT_FILE_COUNT" || error.name === "MulterError") {
+    return res.status(400).json({ message: "The uploaded file exceeds the allowed size." });
+  }
+  if (error.status === 400) {
+    return res.status(400).json({ message: error.message });
+  }
   if (error.name === "ValidationError" || error.name === "CastError") {
     return res.status(400).json({ message: error.message });
   }
