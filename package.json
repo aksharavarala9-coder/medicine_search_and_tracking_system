@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "dev:backend": "npm run dev --prefix back_end",
+    "dev:frontend": "npm run dev --prefix front_end",
+    "build:frontend": "npm run build --prefix front_end"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "express": "^5.2.1"
+  }
+}
