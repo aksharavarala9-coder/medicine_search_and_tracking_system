@@ -1,5 +1,7 @@
 import { Activity, Bot, ClipboardList, FileUp, MapPin, Pill, Search, ShoppingBag, UserRound } from "lucide-react";
 import { NavLink, Outlet } from "react-router-dom";
+import { useCart } from "../customer/CartProvider.jsx";
+import ProfileDropdown from "./ProfileDropdown.jsx";
 import "../pages/customer-workspace.css";
 
 const links = [
@@ -14,6 +16,13 @@ const links = [
 ];
 
 function CustomerLayout({ session, onSessionChange }) {
+  const { clearCart } = useCart();
+
+  function signOut() {
+    clearCart();
+    onSessionChange(null);
+  }
+
   return (
     <div className="workspace-shell">
       <aside className="workspace-sidebar">
@@ -30,11 +39,7 @@ function CustomerLayout({ session, onSessionChange }) {
             </NavLink>
           ))}
         </nav>
-        <div className="workspace-user">
-          <span className="workspace-avatar">{session.user.name?.slice(0, 1).toUpperCase() || "U"}</span>
-          <span className="workspace-user-name">{session.user.name}</span>
-          <button aria-label="Sign out" onClick={() => onSessionChange(null)} title="Sign out" type="button">↗</button>
-        </div>
+        <ProfileDropdown onSignOut={signOut} profilePath="/customer/profile" role="user" session={session} />
       </aside>
       <main className="workspace-main">
         <header className="workspace-mobile-header">
@@ -42,7 +47,7 @@ function CustomerLayout({ session, onSessionChange }) {
             <span className="workspace-brand-mark"><Pill size={18} /></span>
             <span>Medi<span>Track</span></span>
           </a>
-          <button onClick={() => onSessionChange(null)} type="button">Sign out</button>
+          <ProfileDropdown mobile onSignOut={signOut} profilePath="/customer/profile" role="user" session={session} />
         </header>
         <div className="workspace-content"><Outlet /></div>
       </main>

@@ -33,11 +33,11 @@ function AdminDashboard({ session }) {
       <div className="admin-metrics" aria-live="polite">
         {metrics.map(([key, label], index) => {
           const Icon = [Users, Store, Pill, ClipboardList, MessageSquareText][index];
-          return <article className="admin-metric" key={key}><span className="admin-metric-icon"><Icon size={18} /></span><span>{label}</span><strong>{loading ? "—" : summary?.[key] ?? 0}</strong></article>;
+          return <article className="admin-metric" key={key}><span className="admin-metric-icon"><Icon size={18} /></span><span>{label}</span><strong>{loading || error || !summary ? "—" : summary[key] ?? "—"}</strong></article>;
         })}
       </div>
       <div className="admin-shortcuts">
-        {[["customers", "Manage customers", Users], ["pharmacies", "Manage pharmacies", Store], ["orders", "Monitor orders", ClipboardList], ["feedback", "Review feedback", MessageSquareText]].map(([path, label, Icon]) => <Link key={path} to={`/admin/${path}`}><Icon size={18} /><span><strong>{label}</strong><small>View live records</small></span><ArrowRight size={15} /></Link>)}
+        {[["customers", "Manage customers", Users], ["pharmacies", "Manage pharmacies", Store], ["medicines", "Browse medicines", Pill], ["orders", "Monitor orders", ClipboardList], ["feedback", "Review feedback", MessageSquareText]].map(([path, label, Icon]) => <Link key={path} to={`/admin/${path}`}><Icon size={18} /><span><strong>{label}</strong><small>View live records</small></span><ArrowRight size={15} /></Link>)}
       </div>
     </section>
   );

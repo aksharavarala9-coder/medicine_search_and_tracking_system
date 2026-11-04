@@ -7,7 +7,7 @@ import MedicineImage from "../components/MedicineImage.jsx";
 const formatPrice = (value) => new Intl.NumberFormat("en-IN", { style: "currency", currency: "INR" }).format(Number(value) || 0);
 
 function CustomerDashboardPage() {
-  const [data, setData] = useState({ shops: [], medicines: [], orders: [] });
+  const [data, setData] = useState({ shops: [], medicines: [], availableCount: 0, orders: [] });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const user = JSON.parse(sessionStorage.getItem("meditrack.session") || "{}")?.user;
@@ -16,10 +16,15 @@ function CustomerDashboardPage() {
     let active = true;
     Promise.all([
       apiRequest("/api/pharmacy/shops"),
-      apiRequest("/api/pharmacy/medicines"),
+      apiRequest("/api/pharmacy/medicines?sort=recent"),
       apiRequest("/api/users/orders"),
     ]).then(([shops, medicines, orders]) => {
-      if (active) setData({ shops: shops.shops || [], medicines: medicines.medicines || [], orders: orders.orders || [] });
+      if (active) setData({
+        shops: shops.shops || [],
+        medicines: medicines.medicines || [],
+        availableCount: medicines.availableCount ?? medicines.medicines?.filter((medicine) => medicine.stock > 0).length ?? 0,
+        orders: orders.orders || [],
+      });
     }).catch((requestError) => {
       if (active) setError(requestError.message);
     }).finally(() => {
@@ -27,8 +32,6 @@ function CustomerDashboardPage() {
     });
     return () => { active = false; };
   }, []);
-
-  const availableCount = data.medicines.filter((medicine) => medicine.stock > 0).length;
 
   return (
     <section className="customer-page">
@@ -44,30 +47,30 @@ function CustomerDashboardPage() {
       {error && <p className="dashboard-message error-message" role="alert">{error}</p>}
 
       <div className="customer-metrics">
-        <article className="customer-metric"><span className="metric-icon"><Pill size={18} /></span><span>Available listings</span><strong>{loading ? "—" : availableCount}</strong></article>
-        <article className="customer-metric"><span className="metric-icon"><MapPin size={18} /></span><span>Registered pharmacies</span><strong>{loading ? "—" : data.shops.length}</strong></article>
-        <article className="customer-metric"><span className="metric-icon"><PackageCheck size={18} /></span><span>Your orders</span><strong>{loading ? "—" : data.orders.length}</strong></article>
+        <article className="customer-metric"><span className="metric-icon"><Pill size={18} /></span><span>Available medicines</span><strong>{loading || error ? "—" : data.availableCount}</strong></article>
+        <article className="customer-metric"><span className="metric-icon"><MapPin size={18} /></span><span>Registered pharmacies</span><strong>{loading || error ? "—" : data.shops.length}</strong></article>
+        <article className="customer-metric"><span className="metric-icon"><PackageCheck size={18} /></span><span>Your orders</span><strong>{loading || error ? "—" : data.orders.length}</strong></article>
       </div>
 
       <div className="customer-dashboard-grid">
         <section className="customer-panel" aria-labelledby="recent-medicines-title">
           <div className="customer-panel-heading"><div><p className="section-kicker">FROM LOCAL PHARMACIES</p><h2 id="recent-medicines-title">Medicine availability</h2></div><Link to="/customer/medicines">Browse all <ArrowRight size={14} /></Link></div>
-          {loading ? <p className="workspace-empty">Loading listings…</p> : data.medicines.length ? (
+          {loading ? <p className="workspace-empty">Loading listings…</p> : error ? <p className="workspace-empty">Medicine listings are unavailable until the API connection is restored.</p> : data.medicines.filter((medicine) => medicine.stock > 0).length ? (
             <div className="dashboard-medicine-list">
-              {data.medicines.slice(0, 4).map((medicine) => (
+              {data.medicines.filter((medicine) => medicine.stock > 0).slice(0, 4).map((medicine) => (
                 <article className="dashboard-medicine-row" key={medicine._id}>
                   <MedicineImage className="medicine-placeholder" medicine={medicine} />
-                  <div><strong>{medicine.name}</strong><span>{medicine.shop?.name || "Pharmacy"}</span></div>
+                  <div><strong>{medicine.name}</strong><span>{medicine.description || "No description provided."}</span><span>{medicine.shop?.name || "Pharmacy"} · {medicine.stock} in stock</span></div>
                   <strong>{formatPrice(medicine.price)}</strong>
                 </article>
               ))}
             </div>
-          ) : <p className="workspace-empty">No pharmacy listings are available yet.</p>}
+          ) : <p className="workspace-empty">No medicines are currently in stock.</p>}
         </section>
 
         <section className="customer-panel" aria-labelledby="recent-orders-title">
           <div className="customer-panel-heading"><div><p className="section-kicker">ORDER ACTIVITY</p><h2 id="recent-orders-title">Recent orders</h2></div><Link to="/customer/orders">View all <ArrowRight size={14} /></Link></div>
-          {loading ? <p className="workspace-empty">Loading orders…</p> : data.orders.length ? (
+          {loading ? <p className="workspace-empty">Loading orders…</p> : error ? <p className="workspace-empty">Order activity is unavailable until the API connection is restored.</p> : data.orders.length ? (
             <div className="dashboard-order-list">
               {data.orders.slice(0, 4).map((order) => (
                 <article className="dashboard-order-row" key={order._id}>

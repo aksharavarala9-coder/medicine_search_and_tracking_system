@@ -36,7 +36,7 @@ function MyOrdersPage() {
             const currentStep = statuses.indexOf(order.status);
             return (
               <article className="customer-order-card" key={order._id}>
-                <div className="customer-order-card-heading"><div><h2>{order.shop?.name || "Pharmacy"}</h2><span>{new Date(order.createdAt).toLocaleString("en-IN")}</span></div><strong>{formatPrice(order.total)}</strong></div>
+                <div className="customer-order-card-heading"><div><h2>{order.shop?.name || "Pharmacy"}</h2><span>Order #{order._id.slice(-8).toUpperCase()} · {new Date(order.createdAt).toLocaleString("en-IN")}</span></div><strong>{formatPrice(order.total)}</strong></div>
                 <p className="customer-order-items">{order.items.map((item) => `${item.medicine?.name || "Medicine"} × ${item.quantity}`).join(" · ")}</p>
                 {order.status === "cancelled" ? <span className="order-status status-cancelled">Cancelled</span> : <ol className="order-timeline" aria-label={`Order status: ${order.status}`}>
                   {statuses.map((status, index) => <li className={index <= currentStep ? "complete" : ""} key={status}><span />{status}</li>)}
@@ -46,7 +46,7 @@ function MyOrdersPage() {
             );
           })}
         </div>
-      ) : <div className="workspace-empty">Your placed orders will appear here.</div>}
+      ) : <div className="workspace-empty">{error ? "Your orders could not be loaded. Please try again when the API is available." : "Your placed orders will appear here."}</div>}
     </section>
   );
 }

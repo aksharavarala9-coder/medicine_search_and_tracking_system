@@ -73,6 +73,20 @@ async function getPharmacies(req, res, next) {
   } catch (error) { return next(error); }
 }
 
+async function getMedicines(req, res, next) {
+  try {
+    const { page, limit, skip } = pagination(req.query);
+    const expression = makeSearch(req.query.search);
+    const filter = {};
+    if (expression) filter.$or = [{ name: expression }, { description: expression }];
+    const [medicines, total] = await Promise.all([
+      Medicine.find(filter).populate("shop", "name address").sort({ createdAt: -1 }).skip(skip).limit(limit),
+      Medicine.countDocuments(filter),
+    ]);
+    return res.json({ medicines, pagination: { page, limit, total, pages: Math.ceil(total / limit) } });
+  } catch (error) { return next(error); }
+}
+
 async function updatePharmacyStatus(req, res, next) {
   try {
     if (typeof req.body?.active !== "boolean") return res.status(400).json({ message: "Active must be a boolean." });
@@ -112,4 +126,4 @@ async function getFeedback(req, res, next) {
   } catch (error) { return next(error); }
 }
 
-module.exports = { getSummary, getCustomers, updateUserStatus, getPharmacies, updatePharmacyStatus, getOrders, getFeedback };
+module.exports = { getSummary, getCustomers, updateUserStatus, getPharmacies, getMedicines, updatePharmacyStatus, getOrders, getFeedback };

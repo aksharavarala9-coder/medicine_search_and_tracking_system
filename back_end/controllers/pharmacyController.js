@@ -19,11 +19,15 @@ async function searchMedicines(req, res, next) {
       filter.shop.$in = activeShopIds.filter((shopId) => shopId.toString() === req.query.shop);
     }
 
-    const medicines = await Medicine.find(filter)
-      .populate("shop", "name address phone")
-      .sort({ name: 1 })
-      .limit(50);
-    return res.json({ medicines });
+    const sort = req.query.sort === "recent" ? { createdAt: -1 } : { name: 1 };
+    const [medicines, availableCount] = await Promise.all([
+      Medicine.find(filter)
+        .populate("shop", "name address phone")
+        .sort(sort)
+        .limit(50),
+      Medicine.countDocuments({ ...filter, stock: { $gt: 0 } }),
+    ]);
+    return res.json({ medicines, availableCount });
   } catch (error) {
     return next(error);
   }

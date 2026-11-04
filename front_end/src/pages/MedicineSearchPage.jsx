@@ -14,10 +14,16 @@ function MedicineSearchPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
+  const [shopsError, setShopsError] = useState("");
   const { addToCart } = useCart();
 
   useEffect(() => {
-    apiRequest("/api/pharmacy/shops").then((data) => setShops(data.shops || [])).catch(() => setShops([]));
+    apiRequest("/api/pharmacy/shops")
+      .then((data) => {
+        setShops(data.shops || []);
+        setShopsError("");
+      })
+      .catch((requestError) => setShopsError(requestError.message));
   }, []);
 
   useEffect(() => {
@@ -41,7 +47,13 @@ function MedicineSearchPage() {
   }, [query, shop]);
 
   function handleAdd(medicine) {
-    setNotice(addToCart(medicine) ? `${medicine.name} added to your cart.` : "Your cart can contain available medicines from one pharmacy at a time.");
+    if (addToCart(medicine)) {
+      setError("");
+      setNotice(`${medicine.name} added to your cart.`);
+    } else {
+      setNotice("");
+      setError("Your cart can contain available medicines from one pharmacy at a time, and quantities cannot exceed stock.");
+    }
   }
 
   return (
@@ -53,7 +65,8 @@ function MedicineSearchPage() {
       </div>
       {notice && <p className="dashboard-message success-message" role="status"><Check size={15} /> {notice}</p>}
       {error && <p className="dashboard-message error-message" role="alert">{error}</p>}
-      {loading ? <div className="workspace-empty">Loading medicines…</div> : medicines.length ? (
+      {shopsError && <p className="dashboard-message error-message" role="alert">Could not load pharmacy filters: {shopsError}</p>}
+      {loading ? <div className="workspace-empty">Loading medicines…</div> : error ? <div className="workspace-empty">Medicine search is unavailable until the API connection is restored.</div> : medicines.length ? (
         <div className="customer-medicine-grid">
           {medicines.map((medicine) => (
             <article className="customer-medicine-card" key={medicine._id}>

@@ -2,6 +2,7 @@ const express = require("express");
 const {
 	getCustomers,
 	getFeedback,
+	getMedicines,
 	getOrders,
 	getPharmacies,
 	getSummary,
@@ -19,6 +20,7 @@ router.get("/customers", getCustomers);
 router.patch("/customers/:userId/status", updateUserStatus);
 router.get("/pharmacies", getPharmacies);
 router.patch("/pharmacies/:shopId/status", updatePharmacyStatus);
+router.get("/medicines", getMedicines);
 router.get("/orders", getOrders);
 router.get("/feedback", getFeedback);
 

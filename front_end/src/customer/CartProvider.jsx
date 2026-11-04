@@ -15,7 +15,8 @@ function readCart(key) {
 
 export function CartProvider({ children }) {
   const { session } = useAuth();
-  const key = session?.user?.id ? `meditrack.cart.${session.user.id}` : null;
+  const userId = session?.user?.id || session?.user?._id;
+  const key = userId ? `meditrack.cart.${userId}` : null;
   const [cart, setCart] = useState(() => readCart(key));
 
   useEffect(() => {
@@ -53,15 +54,20 @@ export function CartProvider({ children }) {
       .filter((item) => item.quantity > 0));
   }
 
+  function clearCart() {
+    setCart([]);
+    if (key) sessionStorage.removeItem(key);
+  }
+
   const value = useMemo(() => ({
     cart,
     addToCart,
     setQuantity,
     removeFromCart: (medicineId) => setCart((items) => items.filter((item) => item.medicine._id !== medicineId)),
-    clearCart: () => setCart([]),
+    clearCart,
     count: cart.reduce((total, item) => total + item.quantity, 0),
     total: cart.reduce((sum, item) => sum + Number(item.medicine.price) * item.quantity, 0),
-  }), [cart]);
+  }), [cart, key]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

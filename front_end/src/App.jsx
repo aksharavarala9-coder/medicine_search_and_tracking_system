@@ -6,6 +6,7 @@ import CustomerLayout from "./components/CustomerLayout.jsx";
 import PharmacyLayout from "./components/PharmacyLayout.jsx";
 import AdminLayout from "./components/AdminLayout.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
+import AdminProfilePage from "./pages/AdminProfilePage.jsx";
 import CartPage from "./pages/CartPage.jsx";
 import MedicalAssistantPage from "./pages/MedicalAssistantPage.jsx";
 import CustomerRegistrationPage from "./pages/CustomerRegistrationPage.jsx";
@@ -38,7 +39,7 @@ function App() {
       return;
     }
     signOut();
-    navigate("/", { replace: true });
+    navigate("/login", { replace: true });
   }
 
   const homePage = (
@@ -53,6 +54,7 @@ function App() {
     <Routes>
       <Route path="/" element={session ? <Navigate replace to={dashboardPath} /> : homePage} />
       <Route path="/login" element={<GuestRoute><LoginPage /></GuestRoute>} />
+      <Route path="/register" element={<GuestRoute><Navigate replace to="/register/customer" /></GuestRoute>} />
       <Route path="/register/customer" element={<GuestRoute><CustomerRegistrationPage /></GuestRoute>} />
       <Route path="/register/pharmacy" element={<GuestRoute><PharmacyRegistrationPage /></GuestRoute>} />
       <Route path="/customer" element={
@@ -78,6 +80,7 @@ function App() {
         <Route index element={<Navigate replace to="dashboard" />} />
         <Route path="dashboard" element={<PharmacyOverviewPage session={session} />} />
         <Route path="inventory" element={<PharmacyInventoryPage session={session} />} />
+        <Route path="add-medicine" element={<PharmacyAddMedicinePage session={session} />} />
         <Route path="medicines/new" element={<PharmacyAddMedicinePage session={session} />} />
         <Route path="medicines/:medicineId/edit" element={<PharmacyAddMedicinePage session={session} />} />
         <Route path="orders" element={<PharmacyOrdersPage session={session} />} />
@@ -91,8 +94,10 @@ function App() {
       }>
         <Route index element={<Navigate replace to="dashboard" />} />
         <Route path="dashboard" element={<AdminDashboard session={session} />} />
+        <Route path="profile" element={<AdminProfilePage session={session} />} />
         <Route path="customers" element={<AdminManagementPage resource="customers" session={session} />} />
         <Route path="pharmacies" element={<AdminManagementPage resource="pharmacies" session={session} />} />
+        <Route path="medicines" element={<AdminManagementPage resource="medicines" session={session} />} />
         <Route path="orders" element={<AdminManagementPage resource="orders" session={session} />} />
         <Route path="feedback" element={<AdminManagementPage resource="feedback" session={session} />} />
       </Route>

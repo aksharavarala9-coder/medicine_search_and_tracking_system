@@ -31,6 +31,13 @@
 .admin-table { width: 100%; border-collapse: collapse; text-align: left; }
 .admin-table th { padding: 12px; background: #f7faf8; color: #738178; font-size: 9px; font-weight: 700; white-space: nowrap; }
 .admin-table td { max-width: 280px; padding: 12px; border-top: 1px solid #edf2ee; color: #45594d; font-size: 10px; vertical-align: middle; }
+.admin-medicine-cell { display: flex; min-width: 145px; align-items: center; gap: 9px; }
+.admin-medicine-thumb { width: 36px; height: 36px; flex: 0 0 auto; overflow: hidden; border-radius: 6px; background: #eaf5ed; object-fit: cover; color: #388659; }
+.admin-profile-details { display: grid; gap: 0; margin: 0; padding: 5px 18px; }
+.admin-profile-details > div { display: grid; grid-template-columns: minmax(100px, 180px) minmax(0, 1fr); gap: 15px; padding: 14px 0; border-bottom: 1px solid #edf2ee; }
+.admin-profile-details > div:last-child { border-bottom: 0; }
+.admin-profile-details dt { color: #829087; font-size: 11px; }
+.admin-profile-details dd { margin: 0; color: #35493d; font-size: 12px; }
 .admin-comment { min-width: 200px; }
 .admin-state { display: inline-block; padding: 4px 7px; border-radius: 4px; background: #e8f4eb; color: #347b4f; font-size: 9px; font-weight: 700; }
 .admin-state.inactive { background: #f7ece9; color: #99574c; }
@@ -51,7 +58,7 @@
   .admin-mobile-header > a span { color: #328b5f; }
   .admin-mobile-header button { border: 0; background: transparent; color: #64786c; font: inherit; font-size: 11px; }
   .admin-content { padding: 24px 15px 34px; }
-  .admin-mobile-nav { position: fixed; z-index: 4; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); padding: 7px 4px calc(7px + env(safe-area-inset-bottom)); border-top: 1px solid #e5eee7; background: #fff; }
+  .admin-mobile-nav { position: fixed; z-index: 4; right: 0; bottom: 0; left: 0; display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); padding: 7px 4px calc(7px + env(safe-area-inset-bottom)); border-top: 1px solid #e5eee7; background: #fff; }
   .admin-mobile-nav .mobile-workspace-link { display: grid; min-width: 0; justify-items: center; gap: 3px; color: #819087; font-size: 8px; }
   .admin-mobile-nav .mobile-workspace-link span { overflow: hidden; max-width: 100%; text-overflow: ellipsis; white-space: nowrap; }
   .admin-mobile-nav .mobile-workspace-link.active { color: #2f8054; }

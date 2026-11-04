@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Pill } from "lucide-react";
+import { apiUrl } from "../lib/api.js";
 
 function MedicineImage({ medicine, className = "" }) {
   const [failed, setFailed] = useState(false);
   const imageUrl = medicine.image?.storageName
-    ? `/api/pharmacy/medicines/${medicine._id}/image`
+    ? apiUrl(`/api/pharmacy/medicines/${medicine._id}/image`)
     : "";
 
   if (!imageUrl || failed) {

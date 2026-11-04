@@ -45,7 +45,8 @@ async function getOrders(req, res, next) {
     const orders = await Order.find({ user: req.user.id })
       .populate("shop", "name address")
       .populate("items.medicine", "name")
-      .populate("prescription", "originalName mimeType size");
+      .populate("prescription", "originalName mimeType size")
+      .sort({ createdAt: -1 });
     return res.json({ orders });
   } catch (error) {
     return next(error);

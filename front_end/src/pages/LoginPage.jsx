@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { apiRequest } from "../lib/api.js";
 import { useAuth } from "../auth/AuthProvider.jsx";
+import { dashboardPathFor } from "../auth/roleRoutes.js";
 import AuthLayout from "../components/AuthLayout.jsx";
 
 function LoginPage() {
@@ -22,12 +23,7 @@ function LoginPage() {
         body: { email: email.trim(), password },
       });
       signIn(session);
-      const destination = {
-        user: "/customer/dashboard",
-        pharmacy: "/pharmacy/dashboard",
-        admin: "/admin/dashboard",
-      }[session.user.role] || "/";
-      navigate(destination, { replace: true });
+      navigate(dashboardPathFor(session.user.role), { replace: true });
     } catch (requestError) {
       setError(requestError.message);
     } finally {

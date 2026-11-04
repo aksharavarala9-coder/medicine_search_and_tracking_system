@@ -1,7 +1,10 @@
 import axios from "axios";
 
+const configuredBaseURL = import.meta.env.VITE_API_BASE_URL || "/api";
+const normalizedBaseURL = configuredBaseURL.replace(/\/+$/, "");
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "/api",
+  baseURL: normalizedBaseURL.endsWith("/api") ? normalizedBaseURL : `${normalizedBaseURL}/api`,
   headers: { Accept: "application/json" },
 });
 
@@ -33,6 +36,17 @@ export async function apiRequest(path, token, options = {}) {
       abortError.name = "AbortError";
       throw abortError;
     }
-    throw new Error(error.response?.data?.message || error.message || "The request could not be completed.");
+    const message = error.response?.data?.message
+      || (error.response?.status >= 500
+        ? "The MediTrack API at http://localhost:5000 is unavailable. Check that the backend is running."
+        : error.response
+          ? error.message
+          : "Unable to connect to the MediTrack API. Check that the backend is running on http://localhost:5000.");
+    throw new Error(message || "The request could not be completed.");
   }
+}
+
+export function apiUrl(path) {
+  const url = path.replace(/^\/api(?=\/|$)/, "");
+  return api.getUri({ url });
 }

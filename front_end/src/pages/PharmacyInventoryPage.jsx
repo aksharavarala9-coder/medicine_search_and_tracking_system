@@ -67,7 +67,7 @@ function PharmacyInventoryPage({ session }) {
       <label className="pharmacy-filter">Search inventory<input onChange={(event) => setQuery(event.target.value)} placeholder="Medicine name" value={query} /></label>
       {error && <p className="dashboard-message error-message" role="alert">{error}</p>}{notice && <p className="dashboard-message success-message" role="status">{notice}</p>}
       <div className="pharmacy-panel inventory-table-wrap">
-        {loading ? <p className="pharmacy-empty">Loading inventory…</p> : filtered.length ? <div className="pharmacy-inventory-list">
+        {loading ? <p className="pharmacy-empty">Loading inventory…</p> : error ? <p className="pharmacy-empty">Inventory is unavailable until the API connection is restored.</p> : filtered.length ? <div className="pharmacy-inventory-list">
           {filtered.map((item) => editing === item._id ? (
             <form className="pharmacy-edit-row" key={item._id} onSubmit={saveEdit}>
               <label>Name<input onChange={(event) => setForm({ ...form, name: event.target.value })} required value={form.name} /></label>
